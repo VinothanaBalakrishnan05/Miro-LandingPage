@@ -1,0 +1,25 @@
+/* ═══════════════════════════════════════════════════
+   SVG CONNECTIONS
+   ═══════════════════════════════════════════════════ */
+
+.connections-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.connection-path {
+  fill: none;
+  stroke: rgba(67, 97, 238, 0.25);
+  stroke-width: 2;
+  stroke-linecap: round;
+  will-change: stroke-dashoffset;
+}
+
+.connection-dot {
+  fill: var(--blue);
+  opacity: 0.5;
+}

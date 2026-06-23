@@ -1,0 +1,76 @@
+/* ═══════════════════════════════════════════════════
+   FEATURE CARDS
+   ═══════════════════════════════════════════════════ */
+
+.features-container {
+  position: absolute;
+  bottom: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: clamp(16px, 2vw, 28px);
+  will-change: transform, opacity;
+}
+
+.feature-card {
+  width: clamp(200px, 22vw, 280px);
+  padding: clamp(24px, 3vw, 36px) clamp(20px, 2.5vw, 28px);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(200, 195, 185, 0.3);
+  border-radius: 14px;
+  cursor: none;
+  will-change: transform, opacity;
+  perspective: 800px;
+  transform-origin: bottom center;
+  transition: box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.feature-card:hover {
+  box-shadow: var(--shadow-xl);
+  border-color: rgba(200, 195, 185, 0.5);
+}
+
+.feature-icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+  display: block;
+  opacity: 0.7;
+}
+
+.feature-title {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.2vw, 26px);
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.feature-desc {
+  font-size: clamp(13px, 1.3vw, 14px);
+  color: var(--text-sub);
+  line-height: 1.6;
+}
+
+.feature-accent {
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+  margin-top: 18px;
+  transition: width 0.4s var(--ease-out-expo);
+}
+
+.feature-card:hover .feature-accent {
+  width: 48px;
+}
+
+@media (max-width: 768px) {
+  .features-container {
+    flex-direction: column;
+    align-items: center;
+    bottom: 5%;
+  }
+
+  .feature-card {
+    width: clamp(260px, 75vw, 320px);
+  }
+}

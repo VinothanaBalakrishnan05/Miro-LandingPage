@@ -1,0 +1,67 @@
+/* ═══════════════════════════════════════════════════
+   BACKGROUND LAYERS
+   ═══════════════════════════════════════════════════ */
+
+/* ── Gradient backdrop ────────────────────────── */
+.bg-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    165deg,
+    var(--bg) 0%,
+    var(--bg-warm) 35%,
+    var(--bg-soft) 65%,
+    var(--bg-sky) 100%
+  );
+}
+
+/* ── Dot grid ─────────────────────────────────── */
+.bg-grid {
+  position: absolute;
+  inset: -50px;
+  background-image: radial-gradient(
+    circle,
+    rgba(180, 170, 155, 0.13) 1px,
+    transparent 1px
+  );
+  background-size: 28px 28px;
+  transition: opacity 0.8s ease;
+  will-change: transform;
+}
+
+/* ── Ambient glow blobs ───────────────────────── */
+.ambient-glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  opacity: 0.12;
+  will-change: transform;
+  animation: glowPulse 12s ease-in-out infinite alternate;
+}
+
+/* ── Particles ────────────────────────────────── */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--text-muted);
+  pointer-events: none;
+  will-change: transform;
+  animation: particleDrift var(--dur) var(--delay) ease-in-out infinite alternate;
+}
+
+/* ── Floating paper scraps ────────────────────── */
+.floater {
+  position: absolute;
+  border: 1.5px solid rgba(180, 170, 155, 0.2);
+  border-radius: 3px;
+  pointer-events: none;
+  will-change: transform;
+  animation: floaterBob var(--speed) ease-in-out infinite alternate;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(2px);
+}
+
+.floater.circle {
+  border-radius: 50%;
+}
