@@ -11,7 +11,6 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
 }
 
 .scroll-container {
@@ -27,17 +26,39 @@ html, body {
   pointer-events: none;
 }
 
+/* ── Fixed viewport ──────────────────────────
+   The viewport covers the whole screen but must
+   be completely invisible to touch/pointer so
+   that scroll events pass through to the
+   scroll-container underneath.
+
+   REMOVED:  .viewport > * { pointer-events: auto; }
+   That rule was the mobile-scroll killer — it
+   made every background layer eat touch events.
+
+   Only specific interactive elements below opt
+   back in with pointer-events: auto.
+   ──────────────────────────────────────────── */
 .viewport {
   position: fixed; top: 0; left: 0;
   width: 100vw; height: 100vh;
-  overflow: hidden; pointer-events: none; z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
 }
-.viewport > * { pointer-events: auto; }
 
 .workspace {
   position: absolute; inset: 0;
   will-change: transform, opacity;
   transform-origin: center center;
+  pointer-events: none;
+}
+
+/* ── Only these elements should capture clicks/touches ── */
+.sticky-note,
+.feature-card,
+.cta-sticky {
+  pointer-events: auto;
 }
 
 .progress-bar {
@@ -46,14 +67,21 @@ html, body {
   background: linear-gradient(90deg, var(--blue), var(--coral), var(--gold));
   z-index: 9999; will-change: width;
   border-radius: 0 1px 1px 0;
+  pointer-events: none;
 }
 
 .bg-gradient {
   position: absolute; inset: 0;
   background: linear-gradient(165deg, var(--bg) 0%, var(--bg-warm) 35%, var(--bg-soft) 65%, var(--bg-sky) 100%);
+  pointer-events: none;
 }
 
-/* ── Responsive mobile overrides ────────── */
+.static-sections {
+  position: relative; z-index: 2;
+  background: var(--bg);
+}
+
+/* ── Responsive: mobile ───────────────────── */
 @media (max-width: 768px) {
   .scroll-container { cursor: auto; }
   .scroll-spacer { height: 450vh; }
@@ -87,7 +115,7 @@ html, body {
   .feature-card { width: clamp(220px, 80vw, 300px) !important; }
 }
 
-/* ── Tablet overrides ─────────────────────── */
+/* ── Responsive: tablet ───────────────────── */
 @media (min-width: 769px) and (max-width: 1024px) {
   .scroll-spacer { height: 500vh; }
   .features-container { gap: 16px !important; }
@@ -104,7 +132,7 @@ html, body {
   }
 }
 
-/* ── Focus visibility for keyboard nav ───── */
+/* ── Keyboard focus ring ──────────────────── */
 a:focus-visible, button:focus-visible {
   outline: 2px solid var(--blue);
   outline-offset: 3px;
