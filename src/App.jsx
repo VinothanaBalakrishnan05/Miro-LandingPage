@@ -45,21 +45,38 @@ export default function App() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // ── Lenis smooth scroll ──
+  /* ═══════════════════════════════════════════════════
+     LENIS — desktop only
+     
+     Mobile browsers already have excellent momentum
+     scrolling. Lenis fights the native touch engine
+     and causes stutter on phones/tablets. Skip it
+     entirely on narrow viewports and let the browser
+     handle touch scroll natively.
+     ═══════════════════════════════════════════════════ */
   useEffect(() => {
+    // Check width directly — avoids the state‐timing race
+    // where isMobile hasn't settled yet on first render
+    if (window.innerWidth < 768) return;
+
     const el = scrollRef.current;
     if (!el) return;
+
     const lenis = new Lenis({
       wrapper: el,
       content: el.firstElementChild,
-      duration: 1.2,
+      duration: 1.4,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      touchMultiplier: 2.0,
-      wheelMultiplier: 1,
+      wheelMultiplier: 0.9,
       infinite: false,
     });
-    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
     requestAnimationFrame(raf);
+
     return () => lenis.destroy();
   }, []);
 
@@ -77,14 +94,13 @@ export default function App() {
       let delta = 0;
       switch (e.key) {
         case 'ArrowDown': case 'j': delta = STEP; break;
-        case 'ArrowUp': case 'k': delta = -STEP; break;
+        case 'ArrowUp':   case 'k': delta = -STEP; break;
         case ' ': delta = e.shiftKey ? -PAGE : PAGE; break;
         case 'PageDown': delta = PAGE; break;
-        case 'PageUp': delta = -PAGE; break;
+        case 'PageUp':   delta = -PAGE; break;
         case 'Home': el.scrollTo({ top: 0, behavior: 'smooth' }); e.preventDefault(); return;
-        case 'End': el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }); e.preventDefault(); return;
+        case 'End':  el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }); e.preventDefault(); return;
         case 'Tab':
-          // Allow natural tab but nudge scroll to follow focus
           setTimeout(() => {
             const focused = document.activeElement;
             if (focused && focused.getBoundingClientRect) {
@@ -105,27 +121,41 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
 
-  // Workspace camera transform
+  /* ═══════════════════════════════════════════════════
+     WORKSPACE CAMERA — scroll-driven transform
+
+     NEW TIMELINE (old → new):
+     ─────────────────────────────────────────────────
+     Phase 1  0.00–0.20  Hero (static camera)
+     Phase 2  0.20–0.84  Gentle drift while notes,
+                          connections, features build
+     Phase 3  0.84–0.97  Zoom out AFTER features done
+                          (was 0.55 — way too early)
+     ═══════════════════════════════════════════════════ */
   useEffect(() => {
     let raf;
     const update = () => {
       if (!workspaceRef.current) { raf = requestAnimationFrame(update); return; }
       const p = progress.current;
+      const mobile = isMobile;
       let tx = 0, ty = 0, scale = 1, rotate = 0;
 
-      if (p >= 0.15 && p < 0.55) {
-        const phase = mapClamped(p, 0.15, 0.55, 0, 1);
-        tx = Math.sin(phase * Math.PI) * (isMobile ? -5 : -15);
-        ty = phase * (isMobile ? -15 : -30);
-        rotate = Math.sin(phase * Math.PI * 2) * 0.3;
+      // Phase 2: workspace drift
+      if (p >= 0.20 && p < 0.84) {
+        const phase = mapClamped(p, 0.20, 0.84, 0, 1);
+        tx     = Math.sin(phase * Math.PI) * (mobile ? -5 : -15);
+        ty     = phase * (mobile ? -10 : -25);
+        rotate = Math.sin(phase * Math.PI * 2) * 0.25;
       }
-      if (p >= 0.55) {
-        const phase = mapClamped(p, 0.55, 0.72, 0, 1);
+
+      // Phase 3: zoom out — begins AFTER last feature (0.78 + 0.06 = 0.84)
+      if (p >= 0.84) {
+        const phase = mapClamped(p, 0.84, 0.97, 0, 1);
         const eased = easeInOut(Math.min(phase, 1));
-        scale = 1 - eased * 0.2;
-        ty = (isMobile ? -15 : -30) + eased * (isMobile ? 15 : 30);
-        rotate = eased * -0.5;
-        tx = eased * 5;
+        scale  = 1 - eased * 0.22;
+        ty     = (mobile ? -10 : -25) + eased * (mobile ? 10 : 25);
+        rotate = eased * -0.4;
+        tx     = eased * 4;
       }
 
       workspaceRef.current.style.transform =
@@ -144,17 +174,9 @@ export default function App() {
 
   return (
     <>
-      <style>{`
-        .scroll-container { -webkit-overflow-scrolling: touch; }
-        .scroll-container:focus { outline: none; }
-      `}</style>
-
       <div ref={scrollRef} className="scroll-container" onMouseOver={handleMouseOver} tabIndex={0}>
-        {/* Tall spacer for scroll — holds the static sections at end */}
         <div style={{ position: 'relative' }}>
           <div className="scroll-spacer" />
-
-          {/* Static sections pinned AFTER the canvas experience */}
           <div className="static-sections">
             <LogoBar />
             <StatsBar />
@@ -164,7 +186,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* Fixed viewport — all animated canvas layers */}
         <div className="viewport">
           <div className="bg-gradient" />
           <AmbientGlows />
