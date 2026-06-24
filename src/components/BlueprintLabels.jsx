@@ -8,24 +8,20 @@ export default function BlueprintLabels({ progress }) {
 
   useEffect(() => {
     let raf;
-
     const update = () => {
       const p = progress.current;
-
       refs.current.forEach((el, i) => {
         if (!el) return;
         const lbl = BLUEPRINT_LABELS[i];
-        const show = p > lbl.enter && p < 0.88;
+        const show = p > lbl.enter && p < 0.94;  /* was 0.88 */
         el.style.opacity = show
           ? 0.35 *
             mapClamped(p, lbl.enter, lbl.enter + 0.04, 0, 1) *
-            mapClamped(p, 0.82, 0.88, 1, 0)
+            mapClamped(p, 0.90, 0.94, 1, 0)  /* was 0.82-0.88 */
           : 0;
       });
-
       raf = requestAnimationFrame(update);
     };
-
     raf = requestAnimationFrame(update);
     return () => cancelAnimationFrame(raf);
   }, [progress]);
@@ -33,12 +29,8 @@ export default function BlueprintLabels({ progress }) {
   return (
     <>
       {BLUEPRINT_LABELS.map((lbl, i) => (
-        <div
-          key={i}
-          ref={(el) => (refs.current[i] = el)}
-          className="blueprint-label"
-          style={{ left: lbl.x, top: lbl.y }}
-        >
+        <div key={i} ref={(el) => (refs.current[i] = el)} className="blueprint-label"
+          style={{ left: lbl.x, top: lbl.y }}>
           {lbl.text}
         </div>
       ))}

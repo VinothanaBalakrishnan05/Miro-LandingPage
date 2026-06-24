@@ -7,19 +7,11 @@ export default function RevealLabel({ progress }) {
 
   useEffect(() => {
     let raf;
-
     const update = () => {
-      if (!ref.current) {
-        raf = requestAnimationFrame(update);
-        return;
-      }
-
-      const p = progress.current;
-      ref.current.style.opacity = mapClamped(p, 0.88, 0.94, 0, 0.7);
-
+      if (!ref.current) { raf = requestAnimationFrame(update); return; }
+      ref.current.style.opacity = mapClamped(progress.current, 0.92, 0.97, 0, 0.7);  /* was 0.88-0.94 */
       raf = requestAnimationFrame(update);
     };
-
     raf = requestAnimationFrame(update);
     return () => cancelAnimationFrame(raf);
   }, [progress]);

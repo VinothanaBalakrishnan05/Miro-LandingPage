@@ -20,6 +20,7 @@ import LogoBar from './components/LogoBar';
 import StatsBar from './components/StatsBar';
 import ProductShowcase from './components/ProductShowcase';
 import Testimonial from './components/Testimonial';
+import UseCases from './components/UseCases';
 import RevealLabel from './components/RevealLabel';
 import CTASticky from './components/CTASticky';
 import Footer from './components/Footer';
@@ -181,6 +182,7 @@ export default function App() {
             <LogoBar />
             <StatsBar />
             <ProductShowcase />
+            <UseCases />
             <Testimonial />
             <Footer />
           </div>

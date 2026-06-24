@@ -13,6 +13,8 @@ import './styles/features.css';
 import './styles/cta.css';
 import './styles/navbar.css';
 import './styles/sections.css';
+import './styles/showcase.css';
+import './styles/usecases.css';
 import './styles/footer.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
